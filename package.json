@@ -4,16 +4,29 @@
   "description": "Portal de trabajos desarrollado en Nodejs",
   "main": "index.js",
   "scripts": {
-  	"desarrollo": "nodemon index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js",
+    "start": "concurrently \"npm run dev\" \"npm run watch\" ",
+    "watch": "webpack --w --mode development"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "concurrently": "^5.0.0",
+    "connect-mongo": "^3.1.1",
+    "cookie-parser": "^1.4.4",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-handlebars": "^3.1.0"
+    "express-handlebars": "^3.1.0",
+    "express-session": "^1.17.0",
+    "mongoose": "^5.7.7",
+    "slug": "^1.1.0"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "babel-loader": "^8.0.6",
+    "nodemon": "^1.19.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   }
 }
