@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const slug = require('slug'); // generar urls amigables
-const getID = require('../helpers/helper');
+const helper = require('../helpers/helper');
 
 const vacantesSchema = new mongoose.Schema({
 	titulo: {
@@ -55,7 +55,8 @@ vacantesSchema.pre('save', function(next)  {
  //algo como usar clases
  let url = slug(this.titulo); // se crea la url
  // se crea un id unico para la url
- url+=`-${getID()}`;
+ 
+ url+=`-${helper.getID()}`;
  this.url= url;
  next();
 })//middleware que va ejecutar antes de guarda el registro en la bd

@@ -9,12 +9,15 @@ require('dotenv').config({path:'variables.env'});
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const bodyParser = require('body-parser');
 const MongoStore = require('connect-mongo')(session); // pasarle los valores de la session al mongostore
 const routes = require('./routes/');
 const port = process.env.PUERTO || 8000;
 
 const server= http.createServer(app);
-
+// habilitar bodyparser para leer el body y los datos que se van a subir como imagenes 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.engine('handlebars',
 	handlebars({
