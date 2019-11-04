@@ -14,6 +14,15 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
     router.post('/vacantes/nueva', vacantesController.crearVacante);
 
     // para usar el res.render se debe usar un motor de plantillas para renderizar el html
+
+    //mostrar Vacante
+    router.get('/vacantes/:url', vacantesController.mostrarVacante);
+
+    //editar vacante
+
+	router.get('/vacantes/editar/:url', vacantesController.formEditarVacante);
+	router.post('/vacantes/editar/:url', vacantesController.actualizarVacante);
+
 	//retornar las rutas
 	return router;
 }

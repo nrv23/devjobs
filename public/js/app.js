@@ -8,7 +8,10 @@ document.addEventListener("DOMContentLoaded",() =>{
 
 	if(skills){ // los skills no se van a mostrar en toda la aplicacion asi que solamente cuando existan
 
-		skills.addEventListener('click', agregarSkills)
+		skills.addEventListener('click', agregarSkills);
+
+		//una vez que estamos en editar, llamar la funcion
+		skillsSelecionados();
 	}
 })
 
@@ -37,3 +40,19 @@ const agregarSkills = (e) =>{
 		document.querySelector('#skills').value=skillsArray; // guardar los skills en el campo html
 	}
 }
+
+
+const skillsSelecionados = () => {
+	//traer todos los li que tengan la clase activo
+
+	const seleccionados = Array.from(document.querySelectorAll(".lista-conocimientos .activo"));
+	//Array.from para convertir una lista de objetos a array
+	seleccionados.forEach(seleccionado => {
+		Skills.add(seleccionado.textContent);
+	});
+
+	const skillsArray = [...Skills];
+
+	document.querySelector('#skills').value=skillsArray;
+	
+}	

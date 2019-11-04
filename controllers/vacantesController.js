@@ -18,3 +18,51 @@ exports.crearVacante = async (req,res) => {
 
 	res.redirect(`/vacantes/${vacante.url}`);
 }
+
+
+exports.mostrarVacante = async (req, res, next) => {
+
+	const {url}=req.params;
+
+	const vacante = await Vacante.findOne({url});
+	
+	if(!vacante) return next();
+
+	res.render('vacante',{
+		vacante,
+		nombrePagina: vacante.titulo,
+		barra: true
+	})
+}
+
+exports.formEditarVacante = async (req, res, next) => {
+
+	const {url}=req.params;
+
+	const vacante = await Vacante.findOne({url});
+	
+	if(!vacante) return next();
+
+	res.render('editar-vacante',{
+		vacante,
+		nombrePagina: 'Editar - '+vacante.titulo
+	})
+}
+
+
+exports.actualizarVacante = async (req, res) => {
+
+	const {url} = req.params;
+	let vacante = req.body;
+	vacante.skills= req.body.skills.split(',');//generar un array de skills
+
+	const vacanteActualizada = await Vacante.findOneAndUpdate({url}, vacante, {
+		new: true, // devolver el registro actualizado
+		runValidators: true
+	});
+
+	if(vacanteActualizada){
+		res.redirect(`/vacantes/${vacanteActualizada.url}`);
+	}
+	
+}
