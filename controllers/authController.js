@@ -30,3 +30,10 @@ exports.verificarUsuario = (req, res, next) => {
 
 	return next();
 }
+
+exports.cerrarSesion = (req , res ) => {
+
+	req.logout();
+	req.flash('correcto', 'Has cerrado sesión correctamente');
+	return res.redirect('/iniciar-sesion');
+}

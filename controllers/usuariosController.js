@@ -68,3 +68,65 @@ exports.crearCuenta = async (req, res, next) => {
 	
 }
 
+
+exports.formEditarPerfil = async (req, res, next) => {
+
+	res.render('edtarPerfil',{
+		nombrePagina: 'Editar información del perfil',
+		usuario: req.user, // el request guardar la instancia del usuario logueado
+		nombre: req.user.nombre,
+		cerrarSesion: true
+	})
+}
+
+exports.actualizarPerfil = async (req, res, next) => {
+	  
+	 const {email, password, nombre} = req.body;
+	 const {_id } = req.user;
+
+	 const usuario = await Usuarios.findById(_id);
+
+	 usuario.nombre= nombre;
+	 usuario.email = email;
+
+	 if(password){
+	 	usuario.password=password;
+	 }
+
+	await  usuario.save();
+
+	req.flash('correcto','Perfil actualizado con éxito');
+	res.redirect('/admin');
+}
+
+
+exports.validarPerfil = (req, res, next) => {
+	
+	req.sanitizeBody('email').escape();
+	req.sanitizeBody('nombre').escape();  
+
+	if(req.body.password){
+		req.sanitizeBody('password').escape();
+	}
+	//validar los campos que no esten vacios
+	req.checkBody('nombre', 'El nombre es requerido').notEmpty();
+	req.checkBody('email', 'El email debe ser valido').isEmail();
+
+
+	const errores = req.validationErrors();
+
+	if(errores){
+
+		req.flash('error', errores.map(error => error.msg));
+		
+		return res.render('edtarPerfil',{
+			nombrePagina: 'Editar información del perfil',
+			usuario: req.user, // el request guardar la instancia del usuario logueado
+			nombre: req.user.nombre,
+			cerrarSesion: true,
+			mensajes: req.flash()
+		})
+	}
+
+	next();
+}

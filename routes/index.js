@@ -17,7 +17,8 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
     router.get('/vacantes/nueva', authController.verificarUsuario, 
         vacantesController.formNuevaVacante);
     
-    router.post('/vacantes/nueva', authController.verificarUsuario,
+    router.post('/vacantes/nueva', authController.verificarUsuario, 
+        vacantesController.validarVacante,
         vacantesController.crearVacante);
 
     // para usar el res.render se debe usar un motor de plantillas para renderizar el html
@@ -30,10 +31,15 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
 	router.get('/vacantes/editar/:url', 
         authController.verificarUsuario
         ,vacantesController.formEditarVacante);
-    
+
 	router.post('/vacantes/editar/:url', 
-        authController.verificarUsuario
+        authController.verificarUsuario,
+        vacantesController.validarVacante
         ,vacantesController.actualizarVacante);
+
+    //eliminar vacante
+
+    router.delete('/vacantes/eliminar/:id', vacantesController.eliminarVacante);
 
 	//crear cuenta 
 	router.get('/crear-cuenta', usuariosController.formCrearCuenta);
@@ -48,6 +54,18 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
         authController.verificarUsuario
         ,adminController.mostrarPanel);
 
+    //editar`Perfil del usuario
+
+    router.get('/perfil/editar', authController.verificarUsuario,
+                    usuariosController.formEditarPerfil);
+    router.post('/perfil/editar', authController.verificarUsuario,
+               usuariosController.validarPerfil
+                ,usuariosController.actualizarPerfil);
+    //cerrar sesion
+
+    router.get('/cerrar-sesion',authController.verificarUsuario,
+                authController.cerrarSesion)
+    ///perfil/editar
     //retornar las rutas
 	return router;
 }

@@ -1,5 +1,8 @@
 // este archivo es como el index.js, aqui es donde se va ejecutar el codigo que se va usar para la parte
 // del cliente
+import axios from 'axios';
+import Swal from 'sweetalert2';
+
 // para que webpack funcione, se debe cargar el archivo bundle al master page
 document.addEventListener("DOMContentLoaded",() =>{
 	//seleccionar los skills escogidos
@@ -20,6 +23,12 @@ document.addEventListener("DOMContentLoaded",() =>{
 
 		//una vez que estamos en editar, llamar la funcion
 		skillsSelecionados();
+	}
+
+	const listaVacantes = document.querySelector('.panel-administracion');
+
+	if(listaVacantes){
+		listaVacantes.addEventListener("click", accionesListado);
 	}
 })
 
@@ -78,4 +87,17 @@ const limpiarAlertas = () =>{
 			// no se siga ejecutando cuando ya no hay nodos a eliminar
 		}
 	},2000);
+}
+
+//eliminar vacante
+
+const accionesListado = e => {
+
+	e.preventDefault();
+	if(e.target.dataset.eliminar){
+
+	}else {
+		//si le da click a otro boton que no sea el de eliminar lo redireccione al link
+		window.location.href= e.target.href;
+	}
 }

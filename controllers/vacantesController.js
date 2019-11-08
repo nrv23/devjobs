@@ -4,7 +4,9 @@ exports.formNuevaVacante = (req, res) => {
 
 	res.render('nuevaVacante',{
 		nombrePagina: 'Nueva vacante',
-		tagline: 'Completa el formulario para publicar la vacante'
+		tagline: 'Completa el formulario para publicar la vacante',
+		nombre: req.user.nombre,
+		cerrarSesion: true
 	})
 }
 
@@ -48,7 +50,9 @@ exports.formEditarVacante = async (req, res, next) => {
 
 	res.render('editar-vacante',{
 		vacante,
-		nombrePagina: 'Editar - '+vacante.titulo
+		nombrePagina: 'Editar - '+vacante.titulo,
+		nombre: req.user.nombre,
+		cerrarSesion: true
 	})
 }
 
@@ -65,7 +69,59 @@ exports.actualizarVacante = async (req, res) => {
 	});
 
 	if(vacanteActualizada){
+		req.flash('correcto', 'Vacante actualizada correctamente');
 		res.redirect(`/vacantes/${vacanteActualizada.url}`);
 	}
 	
+}
+
+// validar y sanitizar los campos de las nuevas vacantes
+
+exports.validarVacante =  (req, res, next) => {
+	//sanitizar los campos
+
+	req.sanitizeBody('titulo').escape();
+	req.sanitizeBody('empresa').escape();
+	req.sanitizeBody('ubicacion').escape();
+	req.sanitizeBody('salario').escape();
+	req.sanitizeBody('contrato').escape();
+	req.sanitizeBody('skills').escape();
+
+	//validar los campos que no esten vacios o que traigan valores definidos
+
+	req.checkBody('titulo', 'El titulo es requerido').notEmpty();
+	req.checkBody('empresa', 'La empresa es requerida').notEmpty();
+	req.checkBody('ubicacion', 'La ubicacion es requerida').notEmpty();
+	req.checkBody('contrato', 'Seleccione un tipo de contrato').notEmpty();
+	req.checkBody('skills', 'Agrega las habilidades para la vacante').notEmpty();
+
+
+	//almacenar errores
+
+	const errores = req.validationErrors();
+
+	if(errores){
+		req.flash('error', errores.map(error => error.msg));
+
+		res.render('nuevaVacante',{
+			nombrePagina: 'Nueva vacante',
+			tagline: 'Completa el formulario para publicar la vacante',
+			nombre: req.user.nombre,
+			cerrarSesion: true,
+			mensajes: req.flash()
+		})
+	}
+
+	next();
+}
+
+
+
+exports.eliminarVacante = async (req, res) => {
+
+	const {id } = req.params;
+
+	console.log(id);
+
+
 }
