@@ -43,7 +43,14 @@ const vacantesSchema = new mongoose.Schema({
 		nombre: String,
 		email: String,
 		cv: String // se va guardar la ubicacion del pdf
-	}]
+	}],
+	autor: {
+		//referenciar al usuario que esta creando la vacante
+
+		type: mongoose.Schema.ObjectId,
+		ref: 'Usuarios',
+		required: 'El autor es obligatorio'
+	}
 })
 // utilizar hooks en mongoose
 

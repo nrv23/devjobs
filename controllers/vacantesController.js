@@ -11,6 +11,9 @@ exports.formNuevaVacante = (req, res) => {
 exports.crearVacante = async (req,res) => {
 
 	const vacante = new Vacante(req.body); 
+	//asignar el id de referencia a la vacante del usuario que la creó
+
+	vacante.autor = req.user._id;
 	// crear un array de skills
 	vacante.skills = req.body.skills.split(','); // al agregar un split a un string genera un array 
 

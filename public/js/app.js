@@ -3,6 +3,14 @@
 // para que webpack funcione, se debe cargar el archivo bundle al master page
 document.addEventListener("DOMContentLoaded",() =>{
 	//seleccionar los skills escogidos
+	//limpiar las alertas 
+
+	const alertas = document.querySelector('.alertas');
+
+	if(alertas){ //si hay alertas mostrasdas
+		limpiarAlertas();
+	}
+
 
 	const skills = document.querySelector('.lista-conocimientos'); 	
 
@@ -56,3 +64,18 @@ const skillsSelecionados = () => {
 	document.querySelector('#skills').value=skillsArray;
 	
 }	
+
+const limpiarAlertas = () =>{
+
+	const alertas= document.querySelector('.alertas');
+
+	const interval= setInterval(() => { // eliminar cada 2 segundos una alerta
+		if(alertas.children.length > 0){
+			alertas.removeChild(alertas.children[0]);
+		}else{
+			alertas.parentElement.removeChild(alertas);
+			clearInterval(interval); //limpiar el intervalo para que setInterval
+			// no se siga ejecutando cuando ya no hay nodos a eliminar
+		}
+	},2000);
+}

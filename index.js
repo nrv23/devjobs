@@ -10,14 +10,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+const expressValidator = require('express-validator');
 const MongoStore = require('connect-mongo')(session); // pasarle los valores de la session al mongostore
+const passport = require('./config/passport');
 const routes = require('./routes/');
 const port = process.env.PUERTO || 8000;
 
 const server= http.createServer(app);
+
 // habilitar bodyparser para leer el body y los datos que se van a subir como imagenes 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(expressValidator());
 
 app.engine('handlebars',
 	handlebars({
@@ -50,6 +56,20 @@ app.use(session({
 		mongooseConnection: mongoose.connection
 	})
 }))
+
+//ejecutar passport y usar las sessiones en passport
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(flash()); // mensajes de alerta
+//crear variables globales para toda la aplicacion
+
+app.use((req, res, next) => {
+	res.locals.mensajes = req.flash();
+	next();
+});
+
 app.use('/',routes());// primero carga la ruta raiz del servidor y luego carga la ruta que se esta visitando
 //configurar handlebars para poder usarlo
 

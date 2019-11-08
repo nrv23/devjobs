@@ -20,5 +20,26 @@ module.exports = {
 		return opciones.fn(this).replace(new RegExp(` value="${seleccionado}"`),'$& selected="selected"')
 		// reemplazar usando una expresion regular que compare que si en el value existe el valor de la variable seleccionado, se agrega en la opcion el atributo selected
 		//$& significa un string 
+	},
+
+	mostrarAlertas: (mensajes ={}, alertas)=>  {
+		//mensajes, son texto de error o confirmacion
+		//alertas, html para renderizar los mensajes
+
+		const categoria =  Object.keys(mensajes);
+		let html='';
+		if(categoria.length){
+			mensajes[categoria].forEach((mensaje)=> {
+				// statements
+				html+=`
+					<div class="${categoria} alerta">
+						${mensaje}
+					</div>
+				`;	
+			});
+		}
+		//retornar el html
+
+		return alertas.fn().html=html;
 	}
 }
