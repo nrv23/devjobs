@@ -1,4 +1,5 @@
 const Usuarios = require('../models/Usuarios');
+const multer = require('multer');
 
 exports.formCrearCuenta = (req, res) => {
 	
@@ -130,3 +131,16 @@ exports.validarPerfil = (req, res, next) => {
 
 	next();
 }
+
+exports.subirImagen = (req, res, next) => {
+	upload(req, res, function(error){
+		if(error instanceof multer.MulterError){// convertir error a un error de multer para poder 
+			//tratarlo
+
+			return next();
+		}
+
+		next();
+	})
+}
+const upload = multer

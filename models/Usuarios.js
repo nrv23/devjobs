@@ -22,8 +22,8 @@ const usuariosSchema = new mongoose.Schema({
 
 	},
 	token: String, // para actualizar el password,
-	expira: Date// tiempo de expiracion del token
-
+	expira: Date,// tiempo de expiracion del token
+	imagen: String
 });
 
 //hashear pass antes de guardar los usuarios

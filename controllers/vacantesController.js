@@ -115,13 +115,31 @@ exports.validarVacante =  (req, res, next) => {
 	next();
 }
 
-
-
 exports.eliminarVacante = async (req, res) => {
 
 	const {id } = req.params;
 
-	console.log(id);
+	const vacante = await Vacante.findOne({_id: id});
+	if(!vacante){
+		return req.flash('error', 'La vacante que intenta eliminar no existe');
+		res.redirect('/admin');
+	}
+	//verificar que el usuario que creó la vacante sea quien la pueda borrar
+	if(verificarAutor(vacante, req.user)){
+		//req.user guarda la instancia del usuario logueado
+		await vacante.remove(); // la variable vacante guarda la instancia del modelo Vacantes por 
+		//lo tanto no es necesario pasar un filtro
+		return res.status(200).send({message: 'Vacante elinada con éxito'});
+	}else{
+		return res.status(500).send({message: 'Usted no tiene permiso para realizar esta accción'});
+	}
+}
 
 
+const verificarAutor = (vacante = {}, usuario ={}) => {
+	if(!vacante.autor.equals(usuario._id)){
+		return false;
+	}
+
+	return true;
 }

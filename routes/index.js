@@ -59,7 +59,8 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
     router.get('/perfil/editar', authController.verificarUsuario,
                     usuariosController.formEditarPerfil);
     router.post('/perfil/editar', authController.verificarUsuario,
-               usuariosController.validarPerfil
+              // usuariosController.validarPerfil
+                usuariosController.subirImagen
                 ,usuariosController.actualizarPerfil);
     //cerrar sesion
 

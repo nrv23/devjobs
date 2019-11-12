@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
+//const multer = require('multer');
 const expressValidator = require('express-validator');
 const MongoStore = require('connect-mongo')(session); // pasarle los valores de la session al mongostore
 const passport = require('./config/passport');

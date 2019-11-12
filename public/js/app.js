@@ -94,9 +94,52 @@ const limpiarAlertas = () =>{
 const accionesListado = e => {
 
 	e.preventDefault();
-	if(e.target.dataset.eliminar){
 
-	}else {
+	if(e.target.dataset.eliminar){ // si le da click al boton de eliminar, obtener un id para eliminar e
+		//el registro
+		Swal.fire({
+			  title: 'Está seguro(a)?',
+			  text: "Si elimina una vacante no podrá ser recuperada",
+			  icon: 'warning',
+			  showCancelButton: true,
+			  confirmButtonColor: '#3085d6',
+			  cancelButtonColor: '#d33',
+			  confirmButtonText: 'Borrar',
+			  cancelButtonText: 'Cancelar'
+			}).then((result) => {
+				
+				const id = e.target.getAttribute('data-eliminar');
+				const url=`${location.origin}/vacantes/eliminar/${id}`;
+				
+				axios.delete(url, {
+				 params: { id }
+				}).then(data => {
+					console.log(data);
+					if(data.status === 200){
+
+						if (result.value) {
+						    Swal.fire(
+						      'Eliminar',
+						     data.data.message,
+						      'success'
+						    )
+
+						    //eliminar del dom
+						    e.target.parentElement.parentElement.remove();
+					    }
+					}
+	
+				}).catch(() => {
+					Swal.fire({
+						type: 'error',
+						title:'Error',
+						text: 'Usted no permisos para realizar esta acción'
+					})
+				})
+			})
+
+		
+	}else if(e.target.tagName === 'A'){ // si existe un enlace entonces redireccione al enlace
 		//si le da click a otro boton que no sea el de eliminar lo redireccione al link
 		window.location.href= e.target.href;
 	}
