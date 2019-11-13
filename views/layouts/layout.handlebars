@@ -28,6 +28,9 @@
 
 		{{#if cerrarSesion}}<!-- Si la variable barra esta en true se ejecuta el codigo de adentro-->
 			<div class="cerrar-sesion">
+				{{#if imagen}}
+					<img src="/uploads/perfiles/{{imagen}}" class="admin-perfil">
+				{{/if}}
 				<p>Hola! <br> {{nombre}}</p>
 				<a href="/admin">Administración</a>
 				<a href="/cerrar-sesion">Cerrar Sesión</a>

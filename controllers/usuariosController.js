@@ -1,5 +1,56 @@
 const Usuarios = require('../models/Usuarios');
 const multer = require('multer');
+const helper = require('../helpers/helper');
+
+
+
+exports.subirImagen = (req, res, next) => {
+	upload(req, res, function(error){
+		if(error){
+			if(error instanceof multer.MulterError){//si el error fue generado por multer
+				if(error.code === 'LIMIT_FILE_SIZE'){
+					req.flash('error', 'El tamaño es demasiado grande. Máximo 100KB');
+				}else{
+					req.flash('error', error.message);
+				}
+			}else { // si el error no fue generado por multer
+				// cuando el error es generado por express se puede leer el mensaje 
+				//usando la variable error.message
+				req.flash('error', error.message);
+			}
+			res.redirect('/admin');
+			return;
+		}else{
+			next();
+		}
+		
+	});
+	
+}
+// Opciones de Multer
+const configuracionMulter = {
+    limits : { fileSize : 100000 },
+    storage: fileStorage = multer.diskStorage({
+        destination : (req, file, cb) => {
+            cb(null, __dirname+'../../public/uploads/perfiles');
+        }, 
+        filename : (req, file, cb) => {
+            const extension = file.mimetype.split('/')[1];
+            cb(null, `${helper.getID()}.${extension}`);
+        }
+    }),
+    fileFilter(req, file, cb) {
+        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' ) {
+            // el callback se ejecuta como true o false : true cuando la imagen se acepta
+            cb(null, true);
+        } else { //enviar un mensaje de error
+            cb(new Error('Formato No Válido'), false);
+        }
+    }
+}
+
+const upload = multer(configuracionMulter).single('imagen');
+
 
 exports.formCrearCuenta = (req, res) => {
 	
@@ -76,12 +127,13 @@ exports.formEditarPerfil = async (req, res, next) => {
 		nombrePagina: 'Editar información del perfil',
 		usuario: req.user, // el request guardar la instancia del usuario logueado
 		nombre: req.user.nombre,
-		cerrarSesion: true
+		cerrarSesion: true,
+		imagen: req.user.imagen
 	})
 }
 
 exports.actualizarPerfil = async (req, res, next) => {
-	  
+	 
 	 const {email, password, nombre} = req.body;
 	 const {_id } = req.user;
 
@@ -94,6 +146,10 @@ exports.actualizarPerfil = async (req, res, next) => {
 	 	usuario.password=password;
 	 }
 
+	 if(req.file){ // esta informacion ya viene validad con el middleware de subir imagen
+	 	usuario.imagen = req.file.filename;
+	 }
+
 	await  usuario.save();
 
 	req.flash('correcto','Perfil actualizado con éxito');
@@ -102,7 +158,7 @@ exports.actualizarPerfil = async (req, res, next) => {
 
 
 exports.validarPerfil = (req, res, next) => {
-	
+
 	req.sanitizeBody('email').escape();
 	req.sanitizeBody('nombre').escape();  
 
@@ -125,22 +181,11 @@ exports.validarPerfil = (req, res, next) => {
 			usuario: req.user, // el request guardar la instancia del usuario logueado
 			nombre: req.user.nombre,
 			cerrarSesion: true,
-			mensajes: req.flash()
+			mensajes: req.flash(),
+			imagen: req.user.imagen
 		})
 	}
 
 	next();
 }
 
-exports.subirImagen = (req, res, next) => {
-	upload(req, res, function(error){
-		if(error instanceof multer.MulterError){// convertir error a un error de multer para poder 
-			//tratarlo
-
-			return next();
-		}
-
-		next();
-	})
-}
-const upload = multer

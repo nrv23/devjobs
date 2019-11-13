@@ -66,6 +66,12 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
 
     router.get('/cerrar-sesion',authController.verificarUsuario,
                 authController.cerrarSesion)
+    
+    //recibir informacion de candidatos
+
+    router.post('/vacantes/:url', vacantesController.subirCV,
+        vacantesController.guardarCandidato);
+
     ///perfil/editar
     //retornar las rutas
 	return router;

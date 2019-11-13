@@ -3,7 +3,7 @@ const Vacantes = require('../models/Vacantes');
 exports.mostrarPanel = async (req , res ) => {
 
 	//req.user se guardar la referencia del usuario logueado
-	const {_id, nombre} = req.user;
+	const {_id, nombre, imagen} = req.user;
 
 	const vacantes = await Vacantes.find({ autor:_id});
 
@@ -12,6 +12,7 @@ exports.mostrarPanel = async (req , res ) => {
 		tagline: 'Administrar Vacantes',
 		vacantes,
 		cerrarSesion: true, 
-		nombre
+		nombre,
+		imagen
 	})
 }

@@ -15,6 +15,9 @@
 		<div class="campo">
 			<label>Foto</label>
 			<input type="file" name="imagen" placeholder="Tu foto de perfil">
+			{{#if usuario.imagen}}
+				<img src="/uploads/perfiles/{{usuario.imagen}}" class="admin-perfil">
+			{{/if}}
 		</div>
 		<div class="campo">
 			<input type="submit" value="Guardar" class="btn btn-azul">
