@@ -211,6 +211,31 @@ exports.guardarCandidato = async (req, res, next) => {
 	res.redirect('/');
 }
 
+exports.mostrarCandidatos = async (req, res, next) => {
 
+	const {id} = req.params;
+	const {nombre, imagen} = req.user;
+	const vacante = await Vacante.findById(id);
+
+	//validar que el usuario que busca la vacante sea el mismo que la creó
+
+	if(!vacante) return next();	
+
+	if(vacante.autor.toString() !== req.user.id.toString()){
+		req.flash('error','Usted no esta autorizado(a) para realizar esta acción');
+		return res.redirect('/admin')
+	}
+
+	//devolver la lista de candidatos
+	const {candidatos} = vacante;
+	res.render('candidatos',{
+		nombrePagina: 'Candidatos Vacante - '+vacante.titulo,
+		cerrarSesion: true,
+		nombre,
+		imagen,
+		candidatos
+	})
+
+}
 const verificarAutor = (vacante = {}, usuario ={}) => (!vacante.autor.equals(usuario._id)) ? false : true;
 

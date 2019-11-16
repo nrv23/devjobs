@@ -1,4 +1,7 @@
 const passport = require('passport');
+const Usuarios = require('../models/Usuarios');
+const crypto = require('crypto');
+const emailFunc = require('../handlers/email');
 
 exports.formIniciarSesion = (req , res ) => {
 
@@ -37,3 +40,62 @@ exports.cerrarSesion = (req , res ) => {
 	req.flash('correcto', 'Has cerrado sesión correctamente');
 	return res.redirect('/iniciar-sesion');
 }
+
+exports.formRestablecerPassword = (req, res) => {
+
+	res.render('resstablecerPassword',{
+		nombrePagina: 'Reestablecer Contraseña',
+		tagline: 'Si ya está registrado por favor ingrese su correo para proceder a reestablecer su conntraseña'
+	})
+}
+
+
+exports.enviarToken = async (req, res) => {
+
+	const {email} = req.body;
+
+	if(email === ''){
+		req.flash('error', 'El campo email es requerido');
+			return res.render('resstablecerPassword',{
+			nombrePagina: 'Reestablecer Contraseña',
+			tagline: 'Si ya está registrado por favor ingrese su correo para proceder a reestablecer su contraseña',
+			mensajes: req.flash()
+		})	
+	}
+
+	const usuario = await Usuarios.findOne({email});
+
+	if(!usuario){
+
+		req.flash('error', 'El correo ingresado no pertence a ninguna cuenta');
+		return res.redirect('/iniciar-sesion');
+		
+	}
+
+	// si el usuario existe entonces generar token
+
+	const time =  Date.now() + 3600000; // una hora en segundos
+	const token = crypto.randomBytes(30).toString('hex'); // 60 caracteres
+
+	usuario.token = token;
+	usuario.expira = time;
+
+	await usuario.save();
+
+	//crear url con token para reestablecer el password
+
+	const url =`http://${req.headers.host}/reestablecer-password/${token}`;
+
+	//enviar email
+	await emailFunc.enviar({
+		usuario,
+		subject: 'Password Reset',
+		url,
+		archivo: 'reset'
+	});
+
+	req.flash('correcto', 'revisa tu bandeja de entrada');
+	res.redirect('/iniciar-sesion');
+}
+
+//TensorFlow Machine Learning Projects: Build 13 real-world projects with advanced numerical computations using the Python ecosystem

@@ -27,29 +27,47 @@ exports.subirImagen = (req, res, next) => {
 	});
 	
 }
-// Opciones de Multer
-const configuracionMulter = {
-    limits : { fileSize : 100000 },
-    storage: fileStorage = multer.diskStorage({
-        destination : (req, file, cb) => {
-            cb(null, __dirname+'../../public/uploads/perfiles');
-        }, 
-        filename : (req, file, cb) => {
-            const extension = file.mimetype.split('/')[1];
-            cb(null, `${helper.getID()}.${extension}`);
-        }
-    }),
-    fileFilter(req, file, cb) {
-        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' ) {
-            // el callback se ejecuta como true o false : true cuando la imagen se acepta
-            cb(null, true);
-        } else { //enviar un mensaje de error
-            cb(new Error('Formato No Válido'), false);
-        }
-    }
+const configMulter ={ // Objeto de configuracion para subida de archivos en multer
+	//limitar tamaño de imagenes
+	limits: { fileSize: 100000}, // 100 kbytes
+	storage: fileStorage = multer.diskStorage({
+		//dentro de la funcion diskStorage se pasan dos opciones
+		//destination es el lugar donde van a estar almacenadas y filename el nombre del archivo
+
+		destination: (req, file, callback) => {
+			// se devuelve el callback para indicar que el proceso se esta ejecutando
+			callback(null, __dirname+'../../public/uploads/perfiles');// recibe dos parametros, el primero es el error, en este caso es null y el segundo la ruta
+			//del archivo	
+		},
+		filename: (req, file, callback) => {
+			//obtener la extension del archivo
+
+			const extension = file.mimetype.split('/')[1];
+			
+
+			callback(null, `${helper.getID()}.${extension}`);
+		//	callback(null, filename )	// recibe dos parametros, el primero el error que en este caso es null y el archivo
+		}
+	}),//lugar donde se van a almacenar los archivos que se van a ir subiendo
+	fileFilter(req, file, callback)  { // filtrar las imagenes
+		if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
+
+			//permitir solamente imagenes de tipo png o jpeg
+
+			callback(null, true); // se ejecuta si se cumple o no la condicion
+			// si se cumple la condicion se envia null en primer parametro que es el error y true porque
+			// el archivo es valido
+		}else{
+			callback(null, false);
+		}
+	} 
 }
 
-const upload = multer(configuracionMulter).single('imagen');
+
+const upload = multer(configMulter).single('imagen'); //
+
+//.single('imagen'); el parametro dentro de la funcion single es el campo imagen que trae la imagen que se va 
+//cargar
 
 
 exports.formCrearCuenta = (req, res) => {

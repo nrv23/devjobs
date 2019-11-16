@@ -72,6 +72,18 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
     router.post('/vacantes/:url', vacantesController.subirCV,
         vacantesController.guardarCandidato);
 
+    
+    //mostrar los candidatos por vacante
+    router.get('/candidatos/:id', 
+        authController.verificarUsuario,
+        vacantesController.mostrarCandidatos
+         );
+    //peticion para reestablecer password
+    router.get('/reestablecer-password', authController.formRestablecerPassword);
+    router.post('/reestablecer-password', authController.enviarToken);
+
+    //vista para cambiar el password
+    //router.get('/reestablecer-password/:token', authController)
     ///perfil/editar
     //retornar las rutas
 	return router;
