@@ -18,8 +18,8 @@
 
 		{{#if barra}}<!-- Si la variable barra esta en true se ejecuta el codigo de adentro-->
 			<div class="buscador">
-				<form action="#">
-					<input type="text" class="buscar" placeholder="Buscar empleos">
+				<form action="/buscador" method="POST">
+					<input type="text" class="buscar" name="q" placeholder="Buscar empleos">
 					<input type="submit" value="Buscar">
 				</form>
 			</div>

@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
+const createErrors = require('http-errors');
 //const multer = require('multer');
 const expressValidator = require('express-validator');
 const MongoStore = require('connect-mongo')(session); // pasarle los valores de la session al mongostore
@@ -73,6 +74,26 @@ app.use((req, res, next) => {
 
 app.use('/',routes());// primero carga la ruta raiz del servidor y luego carga la ruta que se esta visitando
 //configurar handlebars para poder usarlo
+
+//manejo de errores 
+
+app.use((req, res, next) => { // aqui es donde voy a manejar los errores
+	next(createErrors(404,'No Encontrado'));
+	//createErrors es una funcion para crear mensajes personalizados de errores, recibe dos parametros
+	// el primero es el codigo de estado y el segundo es el mensaje
+	// el 404 es cuando no se encuentra la url que se quiere visitar
+})
+//administro los errores
+app.use((error, req, res) => {
+	//crear variables locales para mostrar el error en uan vista
+
+	res.locals.mensaje = error.message; // con el .message leo el mensaje del error
+	const status = error.status || 500; //algunas middlewares o dependencias no van a generar
+	//el error entonces si el error no esta presente el codigo de error va ser 500 sino va ser
+	//error.status 
+	res.status(status); // el servidor va saber que es un error
+	res.render('error'); // mostrar el mensaje del error
+})
 
 server.listen(port,() =>{
 	console.log(`Servidor escuchando en el puerto ${port}`);

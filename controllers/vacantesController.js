@@ -237,5 +237,28 @@ exports.mostrarCandidatos = async (req, res, next) => {
 	})
 
 }
+
+
+exports.buscarOferta = async (req, res) => {
+
+	const {q} = req.body;
+
+	const vacantes = await Vacante.find({
+		$text:{
+			$search: q
+		}
+	});
+
+
+	//mostrar resultados en la pagina home
+
+	res.render('home',{
+		nombrePagina: 'Resultados de la búsqueda: '+req.body.q,
+		vacantes
+	})
+
+}
+
+
 const verificarAutor = (vacante = {}, usuario ={}) => (!vacante.autor.equals(usuario._id)) ? false : true;
 

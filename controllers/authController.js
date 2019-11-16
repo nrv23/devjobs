@@ -99,3 +99,76 @@ exports.enviarToken = async (req, res) => {
 }
 
 //TensorFlow Machine Learning Projects: Build 13 real-world projects with advanced numerical computations using the Python ecosystem
+
+
+exports.formCambiarPassword = async (req, res) => {
+	
+	//validar si el token es valido
+	const {token} = req.params;
+
+	const usuario = await Usuarios.findOne({
+		token,
+		//validar que el token esta dentro del tiempo valido
+		expira:{
+			$gt: Date.now() // esta linea quiere decir si el token que esta enviandose ya es mayor al tiempo
+		// valido
+		//$gt: este comando compara sl la fecha que estoy comparando es mayor a la fecha que esta 
+		//en el campo expira
+		}
+	});
+
+	if(!usuario){
+		req.flash('error', 'La petición ya se venció, intenta de nuevo');
+		return res.redirect('/reestablecer-password');
+	}
+
+	return res.render('nuevo-password',{
+		nombrePagina: 'Reestablecer Contraseña'
+	});
+}
+
+
+exports.actualizarPassword = async (req, res) => {
+
+	const {password, confirmar} = req.body;
+	const {token} = req.params;
+
+	const usuario = await Usuarios.findOne({
+		token,
+		//validar que el token esta dentro del tiempo valido
+		expira:{
+			$gt: Date.now() // esta linea quiere decir si el token que esta enviandose ya es mayor al tiempo
+		// valido
+		//$gt: este comando compara sl la fecha que estoy comparando es mayor a la fecha que esta 
+		//en el campo expira
+		}
+	});
+	console.log(usuario)
+	if(!usuario){
+		req.flash('error', 'La petición ya se venció, intenta de nuevo');
+		return res.redirect('/reestablecer-password');
+	}
+
+	if(password === '' || confirmar === ''){
+		req.flash('error', 'Todos los campos son requeridos');
+		return res.redirect('/reestablecer-password');
+	}
+
+	if(password !== confirmar){
+		req.flash('error', 'Las contraseñas no coinciden');
+		return res.redirect('/reestablecer-password');
+	}
+
+
+	//todo bien, guardar la contraseña
+
+	usuario.password= password;
+
+	usuario.token = null;
+	usuario.expira= null;
+
+	await usuario.save(); // aqui se actualiza en la bd los datos
+
+	req.flash('correcto', 'Contraseña actualizada con éxito');
+	res.redirect('/iniciar-sesion');
+}

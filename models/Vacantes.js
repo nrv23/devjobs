@@ -67,6 +67,8 @@ vacantesSchema.pre('save', function(next)  {
  this.url= url;
  next();
 })//middleware que va ejecutar antes de guarda el registro en la bd
+
+vacantesSchema.index({titulo: 'text'}); // crear indices para la busqueda
 module.exports = mongoose.model('Vacante', vacantesSchema);
 
 //asignar al schema de mongoose el modelo, se va llamar vacante y el objeto vacantesSchema trae la estructura

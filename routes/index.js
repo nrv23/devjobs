@@ -81,10 +81,12 @@ module.exports = () => { // al importar estas rutas y como esto exporta una func
     //peticion para reestablecer password
     router.get('/reestablecer-password', authController.formRestablecerPassword);
     router.post('/reestablecer-password', authController.enviarToken);
+    router.get('/reestablecer-password/:token', authController.formCambiarPassword);
+    router.post('/reestablecer-password/:token', authController.actualizarPassword);
+   
+   // buscar ofertas
 
-    //vista para cambiar el password
-    //router.get('/reestablecer-password/:token', authController)
-    ///perfil/editar
+   router.post('/buscador', vacantesController.buscarOferta);
     //retornar las rutas
 	return router;
 }
